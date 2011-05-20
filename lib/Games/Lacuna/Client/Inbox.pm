@@ -1,6 +1,6 @@
 package Games::Lacuna::Client::Inbox;
 BEGIN {
-  $Games::Lacuna::Client::Inbox::VERSION = '0.001'; # TRIAL
+  $Games::Lacuna::Client::Inbox::VERSION = '0.002';
 }
 use 5.0080000;
 use strict;

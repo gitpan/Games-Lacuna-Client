@@ -1,6 +1,6 @@
 package Games::Lacuna::Client::Buildings::IBS;
 BEGIN {
-  $Games::Lacuna::Client::Buildings::IBS::VERSION = '0.001'; # TRIAL
+  $Games::Lacuna::Client::Buildings::IBS::VERSION = '0.002';
 }
 use 5.0080000;
 use strict;

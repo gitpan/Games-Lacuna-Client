@@ -1,6 +1,6 @@
 package Games::Lacuna::Cache;
 BEGIN {
-  $Games::Lacuna::Cache::VERSION = '0.001'; # TRIAL
+  $Games::Lacuna::Cache::VERSION = '0.002';
 }
 use utf8;
 use strict;

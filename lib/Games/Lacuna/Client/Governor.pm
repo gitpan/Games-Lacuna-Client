@@ -1,6 +1,6 @@
 package Games::Lacuna::Client::Governor;
 BEGIN {
-  $Games::Lacuna::Client::Governor::VERSION = '0.001'; # TRIAL
+  $Games::Lacuna::Client::Governor::VERSION = '0.002';
 }
 use strict;
 use warnings;

@@ -1,6 +1,6 @@
 package Games::Lacuna::Client::Empire;
 BEGIN {
-  $Games::Lacuna::Client::Empire::VERSION = '0.001'; # TRIAL
+  $Games::Lacuna::Client::Empire::VERSION = '0.002';
 }
 use 5.0080000;
 use strict;

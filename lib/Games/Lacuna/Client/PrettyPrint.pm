@@ -1,6 +1,6 @@
 package Games::Lacuna::Client::PrettyPrint;
 BEGIN {
-  $Games::Lacuna::Client::PrettyPrint::VERSION = '0.001'; # TRIAL
+  $Games::Lacuna::Client::PrettyPrint::VERSION = '0.002';
 }
 use English qw(-no_match_vars);
 use List::Util qw(sum);

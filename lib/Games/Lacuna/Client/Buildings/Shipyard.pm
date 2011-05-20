@@ -1,6 +1,6 @@
 package Games::Lacuna::Client::Buildings::Shipyard;
 BEGIN {
-  $Games::Lacuna::Client::Buildings::Shipyard::VERSION = '0.001'; # TRIAL
+  $Games::Lacuna::Client::Buildings::Shipyard::VERSION = '0.002';
 }
 use 5.0080000;
 use strict;

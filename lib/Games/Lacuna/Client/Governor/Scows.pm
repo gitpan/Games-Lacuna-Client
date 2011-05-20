@@ -9,7 +9,7 @@
 
 package Games::Lacuna::Client::Governor::Scows;
 BEGIN {
-  $Games::Lacuna::Client::Governor::Scows::VERSION = '0.001'; # TRIAL
+  $Games::Lacuna::Client::Governor::Scows::VERSION = '0.002';
 }
 use strict;
 use warnings qw(FATAL all);

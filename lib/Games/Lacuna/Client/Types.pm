@@ -22,7 +22,7 @@
 
 package Games::Lacuna::Client::Types;
 BEGIN {
-  $Games::Lacuna::Client::Types::VERSION = '0.001'; # TRIAL
+  $Games::Lacuna::Client::Types::VERSION = '0.002';
 }
 
 use strict;
