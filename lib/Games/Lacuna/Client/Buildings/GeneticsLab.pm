@@ -1,6 +1,6 @@
 package Games::Lacuna::Client::Buildings::GeneticsLab;
-BEGIN {
-  $Games::Lacuna::Client::Buildings::GeneticsLab::VERSION = '0.002';
+{
+  $Games::Lacuna::Client::Buildings::GeneticsLab::VERSION = '0.003';
 }
 use 5.0080000;
 use strict;
@@ -16,6 +16,7 @@ sub api_methods {
   return {
     prepare_experiment => { default_args => [qw(session_id building_id)] },
     run_experiment     => { default_args => [qw(session_id building_id)] },
+    rename_species     => { default_args => [qw(session_id building_id)] },
   };
 }
 

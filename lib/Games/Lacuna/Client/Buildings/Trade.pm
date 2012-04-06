@@ -1,6 +1,6 @@
 package Games::Lacuna::Client::Buildings::Trade;
-BEGIN {
-  $Games::Lacuna::Client::Buildings::Trade::VERSION = '0.002';
+{
+  $Games::Lacuna::Client::Buildings::Trade::VERSION = '0.003';
 }
 use 5.0080000;
 use strict;
@@ -18,7 +18,9 @@ sub api_methods {
     get_ships             => { default_args => [qw(session_id building_id)] },
     get_prisoners         => { default_args => [qw(session_id building_id)] },
     get_plans             => { default_args => [qw(session_id building_id)] },
+    get_plan_summary      => { default_args => [qw(session_id building_id)] },
     get_glyphs            => { default_args => [qw(session_id building_id)] },
+    get_glyph_summary     => { default_args => [qw(session_id building_id)] },
     withdraw_from_market  => { default_args => [qw(session_id building_id)] },
     accept_from_market    => { default_args => [qw(session_id building_id)] },
     view_market           => { default_args => [qw(session_id building_id)] },
@@ -27,7 +29,7 @@ sub api_methods {
     get_stored_resources  => { default_args => [qw(session_id building_id)] },
     push_items            => { default_args => [qw(session_id building_id)] },
     report_abuse          => { default_args => [qw(session_id building_id)] },
-    
+
     # deprecated - old trade system
     add_trade             => { default_args => [qw(session_id building_id)] },
     withdraw_trade        => { default_args => [qw(session_id building_id)] },

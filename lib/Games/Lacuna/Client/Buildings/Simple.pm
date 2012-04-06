@@ -1,6 +1,6 @@
 package Games::Lacuna::Client::Buildings::Simple;
-BEGIN {
-  $Games::Lacuna::Client::Buildings::Simple::VERSION = '0.002';
+{
+  $Games::Lacuna::Client::Buildings::Simple::VERSION = '0.003';
 }
 use 5.0080000;
 use strict;
@@ -33,7 +33,6 @@ our @BuildingTypes = (qw(
     Bean
     Beeldeban
     BeeldebanNest
-    BlackHoleGenerator
     Bread
     Burger
     Cheese
@@ -111,7 +110,6 @@ our @BuildingTypes = (qw(
     Syrup
     TerraformingLab
     TerraformingPlatform
-    TheDillonForge
     University
     Volcano
     WasteDigester

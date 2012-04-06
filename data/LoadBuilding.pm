@@ -19,7 +19,7 @@ sub _load{
 sub Load{
   my($self,$config) = @_;
   my $class = blessed $self || $self;
-  
+
   $self = bless {},$class unless ref $self;
   $self->{yaml} = _load($config);
   for my $data ( values %{$self->{yaml}} ){
@@ -63,5 +63,27 @@ sub tag_list{
   my @tags = sort keys %tags;
   return @tags if wantarray;
   return \@tags;
+}
+
+sub labels{
+  my($self) = @_;
+  my %type;
+  my $yaml = $self->{yaml};
+  for my $building ( sort keys %$yaml ){
+    $type{$building} = $yaml->{$building}{label};
+  }
+  return \%type;
+}
+
+sub glyph_recipes{
+  my($self) = @_;
+  my %recipes;
+  my $yaml = $self->{yaml};
+  for my $building ( sort keys %$yaml ){
+    next if !exists $yaml->{$building}{glyph_recipes};
+    my $recipes = $yaml->{$building}{glyph_recipes};
+    push @{ $recipes{$building} }, @$recipes;
+  }
+  return \%recipes;
 }
 1;

@@ -1,6 +1,6 @@
 package Games::Lacuna::Client::Module;
-BEGIN {
-  $Games::Lacuna::Client::Module::VERSION = '0.002';
+{
+  $Games::Lacuna::Client::Module::VERSION = '0.003';
 }
 use 5.0080000;
 use strict;
@@ -32,12 +32,12 @@ sub new {
   my $class = shift;
   my %opt = @_;
   my $client = $opt{client} || croak("Need Games::Lacuna::Client");
-  
+
   my $self = bless {
     %opt,
   } => $class;
   $self->{uri} = $self->client->uri . '/' . $self->module_prefix;
-  
+
   return $self;
 }
 
@@ -50,7 +50,7 @@ sub init {
 sub _generate_api_methods {
   my $class = shift;
   my $method_specs = shift || croak("Missing method specs");
-  
+
   foreach my $method_name (keys %$method_specs) {
     my $target = $class->_find_target_name($method_name);
     my $spec = $method_specs->{$method_name};
@@ -63,19 +63,19 @@ sub _generate_method_per_spec {
   my $target      = shift;
   my $method_name = shift;
   my $spec        = shift;
-  
+
   my $default_args  = $spec->{default_args};
-  
+
   my $sub = sub {
     my $self = shift;
     my $client = $self->client;
-    
+
     # prepend the default parameters to the arguments
     my $params = [
       (map $self->$_(), @$default_args),
       @_
     ];
-    
+
     if ($client->debug) {
       print STDERR "DEBUG: " . __PACKAGE__ . " request " . Data::Dumper::Dumper([$self->uri, $method_name, $params]);
     }
@@ -95,7 +95,7 @@ sub _generate_method_per_spec {
   };
 
   no strict 'refs';
-  *{"$target"} = $sub;  
+  *{"$target"} = $sub;
 }
 
 sub _find_target_name {

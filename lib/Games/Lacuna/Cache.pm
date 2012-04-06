@@ -1,6 +1,6 @@
 package Games::Lacuna::Cache;
-BEGIN {
-  $Games::Lacuna::Cache::VERSION = '0.002';
+{
+  $Games::Lacuna::Cache::VERSION = '0.003';
 }
 use utf8;
 use strict;
@@ -34,8 +34,8 @@ sub new {
     $self->debug("Using cache file: $self->{'CACHE_FILE'}");
 
     $self->load_data($refresh);
-    
-    
+
+
     return $self;
 
 
@@ -86,7 +86,7 @@ sub body_data{
     if ($body_id){
         return $self->{'DATA'}->{'bodies'}->{$body_id};
     }else{
-        # Really just a convenience - you should call by id 
+        # Really just a convenience - you should call by id
         return $self->{'DATA'}->{'bodies'};
     }
 
@@ -96,7 +96,7 @@ sub building_data{
     my ($self, $building_id, $refresh) = @_;
     # What really kills a client is fetching full data when we can live with
     # the data from $planet
-    # Let the client tell us if it really needs full data 
+    # Let the client tell us if it really needs full data
     if ($refresh){
         $self->refresh_data("buildings", $building_id);
     }
@@ -112,7 +112,7 @@ sub building_data{
 sub view_planet{
     my ($self, $id) = @_;
     my $object = $self->{'OBJECTS'}->{'bodies'}->{$id};
-    # Again, we call view buildings so that *all* data is current. 
+    # Again, we call view buildings so that *all* data is current.
     my $response = $object->view_buildings();
     $self->{'SESSION_CALLS'} += 1;
     $self->debug( "=== SESSION CALLS: $self->{'SESSION_CALLS'} ! ===\n");
@@ -137,7 +137,7 @@ sub get_building_object{
     if (! $self->{'OBJECTS'}->{'buildings'}->{$id}){
         my $pattern = $self->{'DATA'}->{'buildings'}->{$id}->{'url'};
         $pattern =~ s|^/||;
-        $self->{'OBJECTS'}->{'buildings'}->{$id} =  $self->{'CLIENT'}->building(type => $pattern, id => $id); 
+        $self->{'OBJECTS'}->{'buildings'}->{$id} =  $self->{'CLIENT'}->building(type => $pattern, id => $id);
 
     }
     return $self->{'OBJECTS'}->{'buildings'}->{$id};
@@ -193,10 +193,10 @@ sub list_buildings_on_planet{
     if ($filters){
         foreach my $pattern (@$filters){
             foreach my $id (keys %$buildings){
-                #print "(searching planet $planet for $pattern ...)\n"; 
+                #print "(searching planet $planet for $pattern ...)\n";
                 if ($buildings->{$id}->{'url'} =~ m|/$pattern|){
-                    #        print "(found $pattern ($_) ...)\n"; 
-                    $self->{'OBJECTS'}->{'buildings'}->{$id} =  $self->{'CLIENT'}->building(type => $pattern, id => $id); 
+                    #        print "(found $pattern ($_) ...)\n";
+                    $self->{'OBJECTS'}->{'buildings'}->{$id} =  $self->{'CLIENT'}->building(type => $pattern, id => $id);
                     push (@results, $id);
 
                 }
@@ -206,7 +206,7 @@ sub list_buildings_on_planet{
         foreach my $id (keys %$buildings){
             my $pt = $buildings->{$id}->{'url'};
             $pt =~ s|^/||;
-            $self->{'OBJECTS'}->{'buildings'}->{$id} =  $self->{'CLIENT'}->building(type => $pt, id => $id); 
+            $self->{'OBJECTS'}->{'buildings'}->{$id} =  $self->{'CLIENT'}->building(type => $pt, id => $id);
             push (@results, $id);
         }
 
@@ -223,7 +223,7 @@ sub refresh_data{
         if (! $checked ||  (time() - $checked) >  $self->{'CACHE_TIME'}
              || ($self->{'DATA'}->{$key}->{$id}->{'response_type'} eq "partial")){
             # We're stale or we don't exist or we were only partial in the
-            # first place. 
+            # first place.
             #print "Stale data for $key!\n";
             my $client_object = $self->{'OBJECTS'}->{$key}->{$id};
             if ($key =~ m/bodies/){
@@ -252,7 +252,7 @@ sub refresh_data{
                 $self->debug( "=== SESSION CALLS: $self->{'SESSION_CALLS'} ! ===\n");
                 $response = $client_object->view();
                 $self->cache_response("building",$response);
-            
+
             }
             # Store the new object for later.
             $self->{'OBJECTS'}->{$key}->{$id} = $client_object;
@@ -265,7 +265,7 @@ sub refresh_data{
         if ($key =~ m/empire/){
             my $checked = $self->{'DATA'}->{$key}->{'last_checked'};
             if (!$checked ||  (time() - $checked) >  $self->{'CACHE_TIME'}){
-                # We're stale or we don't exist. 
+                # We're stale or we don't exist.
                 # Only force a write when we do this top level, not for every
                 # bloody planet
                 $self->debug( "Stale in empire - refreshing ");
@@ -293,7 +293,7 @@ sub refresh_data{
 
 sub cache_response {
     # TODO - refactor. This is a little ugly because of the 2 levels of
-    # response 
+    # response
     my ($self, $type, $response) = @_;
     #print "Caching response:\n";
     #print Dumper($response);
@@ -329,7 +329,7 @@ sub cache_response {
             $self->{'DATA'}->{'bodies'}->{$body_id}->{'buildings'}->{$building} = $response->{'buildings'}{$building};
         }
     }elsif ($type eq "building"){
-        my $id = $response->{'building'}->{'id'}; 
+        my $id = $response->{'building'}->{'id'};
         $self->{'DATA'}->{'buildings'}->{$id} = $response->{'building'};
         $self->{'DATA'}->{'buildings'}->{$id}->{'response_type'} = "full";
         $self->{'DATA'}->{'buildings'}->{$id}->{'last_checked'} = time();
@@ -365,14 +365,14 @@ sub extrapolate{
     my @resources = ("water", "ore", "energy", "waste");
     foreach my $planet (keys %{$self->{'DATA'}->{'empire'}->{'planets'}}){
         my $data = $self->{'DATA'}->{'bodies'}->{$planet};
-        # We don't want to update last_checked if we didn't honestly check. 
+        # We don't want to update last_checked if we didn't honestly check.
         # But if we use last_checked, we're adding to an extrapolated figure....
         my $checked = $data->{'last_extrapolated'} || $data->{'last_checked'};
         #$self->debug("Time last checked (or extrapolated): $checked \n");
         #$self->debug("Time now: " . time() . "\n");
         # Fraction of an hour
         #$self->debug("Delta: " . (time() - $checked) );
-        
+
         my $lapsed =  (time() - $checked) / 3600;
         #$self->debug("Difference:  $lapsed of an hour \n");
         foreach my $res (@resources){
@@ -396,7 +396,7 @@ sub remaining_capacity{
 
     my $amount = $self->{'DATA'}->{'bodies'}->{$planet}->{$res."_stored"};
     my $capacity = $self->{'DATA'}->{'bodies'}->{$planet}->{$res."_capacity"};
-    return $capacity - $amount; 
+    return $capacity - $amount;
 
 }
 sub prop_capacity{
@@ -405,7 +405,7 @@ sub prop_capacity{
 
     my $amount = $self->{'DATA'}->{'bodies'}->{$planet}->{$res."_stored"};
     my $capacity = $self->{'DATA'}->{'bodies'}->{$planet}->{$res."_capacity"};
-    return ($amount / $capacity); 
+    return ($amount / $capacity);
 }
 
 
@@ -435,7 +435,7 @@ sub resource_details{
             my $obj = $self->get_building_object($buildings[0]);
             $self->{'SESSION_CALLS'} += 1;
             my $response = $obj->get_stored_resources();
-            $breakdown = $self->parse_resource_breakdown($response->{'resources'}, $resource_type); 
+            $breakdown = $self->parse_resource_breakdown($response->{'resources'}, $resource_type);
 
         }
     }
@@ -554,40 +554,40 @@ At the moment,
 
 Ditto.
 
-These should work pretty much as you expect. Cache stores partial 
-information if it has it, and full information if you request it. 
-That's because a lot of high level calls return a bit of data about 
-the next level down (Empire gives planets, Body gives buildings, etc). 
-So we store the partial to avoid hitting up a full call when all you 
+These should work pretty much as you expect. Cache stores partial
+information if it has it, and full information if you request it.
+That's because a lot of high level calls return a bit of data about
+the next level down (Empire gives planets, Body gives buildings, etc).
+So we store the partial to avoid hitting up a full call when all you
 want is the id. So C<empire_data> will give you full empire data and partial
 planets (just ID and name). C<Planet_data> will give you full data on the
 planet and partial (though fairly good) data on the buildings.
-C<building_data> will give you full info on the building. 
+C<building_data> will give you full info on the building.
 
 =head2 C<building_data([$building_id], [$refresh])>
 
-This might not work as you expect. By default, when we call body_data, 
-we store partial info on buildings from a C<< body->get_buildings() >> request. 
+This might not work as you expect. By default, when we call body_data,
+we store partial info on buildings from a C<< body->get_buildings() >> request.
 That's generally enough for pending build, recycling, etc. Calling
 building data with the refresh flag set will give you full info on that
-building.  
+building.
 
-The data structure returned from a full request consists of the main 
-hash returned by the C<< object->view() >> call, *and* other top level 
-structures in the response.  So if you call 
+The data structure returned from a full request consists of the main
+hash returned by the C<< object->view() >> call, *and* other top level
+structures in the response.  So if you call
 
     my $spaceport = $lacuna->building_data($spaceport),
 
-you'll get C<< $spaceport->{'id'} >>, C<< $spaceport->{'waste_hour'} >>, etc, but 
+you'll get C<< $spaceport->{'id'} >>, C<< $spaceport->{'waste_hour'} >>, etc, but
 you'll also get C<< $spaceport->{'docked_ships'} >>. Similarly,
-C<< $recycler->{'recycle'} >> if it's in the middle of one. 
+C<< $recycler->{'recycle'} >> if it's in the middle of one.
 
 =head2 NB REFRESH FLAG
 
-The "I<refresh>" flag may not work quite as you expect. It doesn't 
-guarantee fresh info. It guarantees full data less than 25 minutes old 
+The "I<refresh>" flag may not work quite as you expect. It doesn't
+guarantee fresh info. It guarantees full data less than 25 minutes old
 (or whatever you set I<CACHE_TIME> to). That's somewhat counterintuitive,
-and I should probably call it the "I<full>" flag, but for the moment, this 
+and I should probably call it the "I<full>" flag, but for the moment, this
 is what you get. The resource extrapolation works pretty well, so if you
 call "I<refresh>" on a building for which we already have full info, you'll
 get that full info, with extrapolated resource values, but it might be a
@@ -615,11 +615,11 @@ C<$planet> will be a planet id. C<foreach my $planet (keys %$planet_data)> from
 above will do.
 
 
-C<@filters> needs to contain valid building types of the kind found in a 
-building url - "I<wasterecycling>" or "I<spaceport>". Feel free to implement a 
+C<@filters> needs to contain valid building types of the kind found in a
+building url - "I<wasterecycling>" or "I<spaceport>". Feel free to implement a
 look up table for "I<Space Port>" and "I<Trash Compactor>" :)
 
-The method returns a list of building ids, but it also creates client 
+The method returns a list of building ids, but it also creates client
 objects in the I<Cache OBJECT> structure. So then you could say
 
     foreach $building (@recyclers){
@@ -630,7 +630,7 @@ or any similar client method. Don't use the object for view methods,
 though - use the helper methods above so data is cached (and actually
 just use cached data where you can)
 
-Note objects do not persist between script calls, and are not shared 
+Note objects do not persist between script calls, and are not shared
 between scripts.
 
 =head1 DATA
@@ -641,7 +641,7 @@ C<< $lacuna->{'OBJECTS'}->{'buildings'} >>
 and
 C<< $lacuna->{'OBJECTS'}->{'bodies'} >>
 
-Stored by id. This just means you don't have to toss around the objects all 
+Stored by id. This just means you don't have to toss around the objects all
 the time.
 
 C<< $lacuna->{'OBJECTS'}->{$type}->{$id}->method(); >>
@@ -652,7 +652,7 @@ I think that's about it.
 
 =head1 CAVEATS
 
-It may stomp on disk data, but scripts should play friendly with each other. 
+It may stomp on disk data, but scripts should play friendly with each other.
 See how it goes.
 
 You know the drill. Don't use it to run Fusion Power plants. I<Oh, wait....>

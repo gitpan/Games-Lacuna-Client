@@ -21,8 +21,8 @@
 ###################################################
 
 package Games::Lacuna::Client::Types;
-BEGIN {
-  $Games::Lacuna::Client::Types::VERSION = '0.002';
+{
+  $Games::Lacuna::Client::Types::VERSION = '0.003';
 }
 
 use strict;
@@ -32,12 +32,12 @@ use List::MoreUtils qw(any);
 require Exporter;
 
 our @ISA = qw(Exporter);
-our @EXPORT = qw( food_types ore_types ship_types ship_attribute_types get_tags tag_list meta_building_list meta_type meta_type_list ship_tags_list ship_tags ship_type_human is_food_type is_ore_type );
+our @EXPORT = qw( food_types ore_types ship_types ship_attribute_types building_types building_labels get_tags tag_list meta_building_list meta_type meta_type_list building_label building_type_from_label building_glyph_recipes ship_tags_list ship_tags ship_type_human is_food_type is_ore_type );
 our %EXPORT_TAGS = (
-    list     => [qw( food_types ore_types ship_types ship_attribute_types )],
+    list     => [qw( food_types ore_types ship_types ship_attribute_types building_types building_labels )],
     resource => [qw( food_types ore_types )],
     tag      => [qw( get_tags tag_list )],
-    meta     => [qw( meta_building_list meta_type meta_type_list )],
+    meta     => [qw( meta_building_list meta_type meta_type_list building_label building_type_from_label building_glyph_recipes )],
     ship     => [qw( ship_types ship_attribute_types ship_tags_list ship_tags ship_type_human )],
     is       => [qw( is_food_type is_ore_type )],
     all      => [@EXPORT],
@@ -79,7 +79,6 @@ our %EXPORT_TAGS = (
         command => [qw(
             Archaeology
             ArtMuseum
-            BlackHoleGenerator
             Capitol
             CloakingLab
             CulinaryInstitute
@@ -91,6 +90,8 @@ our %EXPORT_TAGS = (
             GeneticsLab
             IBS
             Intelligence
+            IntelTraining
+            MayhemTraining
             MercenariesGuild
             MissionCommand
             MunitionsLab
@@ -103,6 +104,7 @@ our %EXPORT_TAGS = (
             PilotTraining
             PlanetaryCommand
             PoliceStation
+            PoliticsTraining
             Propulsion
             SAW
             Security
@@ -117,6 +119,7 @@ our %EXPORT_TAGS = (
             SubspaceSupplyDepot
             TerraformingLab
             TerraformingPlatform
+            TheftTraining
             ThemePark
             Trade
             Transporter
@@ -172,6 +175,7 @@ our %EXPORT_TAGS = (
             Beach8
             Beach9
             BeeldebanNest
+            BlackHoleGenerator
             CitadelOfKnope
             CrashedShipSite
             Crater
@@ -235,6 +239,7 @@ our %EXPORT_TAGS = (
         )],
         waste => [qw(
             DeployedBleeder
+            WasteExchanger
             WasteRecycling
             WasteTreatment
         )],
@@ -299,7 +304,7 @@ our %EXPORT_TAGS = (
         Bean => [qw(food)],
         Beeldeban => [qw(food)],
         BeeldebanNest => [qw(food glyph)],
-        BlackHoleGenerator => [qw(command energy space_station_module)],
+        BlackHoleGenerator => [qw(command glyph)],
         Bread => [qw(food)],
         Burger => [qw(food)],
         Capitol => [qw(command infrastructure)],
@@ -338,6 +343,7 @@ our %EXPORT_TAGS = (
         HallsOfVrbansk => [qw(glyph)],
         HydroCarbon => [qw(energy)],
         IBS => [qw(command space_station_module)],
+        IntelTraining => [qw(command infrastructure intelligence)],
         Intelligence => [qw(command infrastructure intelligence)],
         InterDimensionalRift => [qw(glyph storage)],
         JunkHengeSculpture => [qw(happiness infrastructure sculpture waste)],
@@ -361,6 +367,7 @@ our %EXPORT_TAGS = (
         Malcud => [qw(food)],
         MalcudField => [qw(food glyph)],
         MassadsHenge => [qw(glyph)],
+        MayhemTraining => [qw(command infrastructure intelligence)],
         MercenariesGuild => [qw(command infrastructure ship trade)],
         MetalJunkArches => [qw(happiness infrastructure sculpture waste)],
         Mine => [qw(ore)],
@@ -383,6 +390,7 @@ our %EXPORT_TAGS = (
         PilotTraining => [qw(command infrastructure ship)],
         PlanetaryCommand => [qw(command infrastructure)],
         PoliceStation => [qw(command infrastructure space_station_module)],
+        PoliticsTraining => [qw(command infrastructure intelligence)],
         Potato => [qw(food)],
         Propulsion => [qw(command infrastructure ship)],
         PyramidJunkSculpture => [qw(happiness infrastructure sculpture waste)],
@@ -410,6 +418,7 @@ our %EXPORT_TAGS = (
         TerraformingLab => [qw(colony command infrastructure)],
         TerraformingPlatform => [qw(colony command infrastructure)],
         TheDillonForge => [qw(glyph)],
+        TheftTraining => [qw(command infrastructure intelligence)],
         ThemePark => [qw(command happiness infrastructure)],
         Trade => [qw(command infrastructure ship trade)],
         Transporter => [qw(command infrastructure trade)],
@@ -418,6 +427,7 @@ our %EXPORT_TAGS = (
         Warehouse => [qw(command space_station_module storage)],
         WasteDigester => [qw(ore waste)],
         WasteEnergy => [qw(energy waste)],
+        WasteExchanger => [qw(waste)],
         WasteRecycling => [qw(waste)],
         WasteSequestration => [qw(storage waste)],
         WasteTreatment => [qw(waste)],
@@ -430,6 +440,246 @@ our %EXPORT_TAGS = (
     sub get_tags{
         my( $building ) = @_;
         return @{ $tags{$building} };
+    }
+}
+{
+    my %label = (
+        Algae => "Algae Cropper",
+        AlgaePond => "Algae Pond",
+        AmalgusMeadow => "Amalgus Meadow",
+        Apple => "Apple Orchard",
+        Archaeology => "Archaeology Ministry",
+        ArtMuseum => "Art Museum",
+        AtmosphericEvaporator => "Atmospheric Evaporator",
+        Beach1 => "Beach [1]",
+        Beach10 => "Beach [10]",
+        Beach11 => "Beach [11]",
+        Beach12 => "Beach [12]",
+        Beach13 => "Beach [13]",
+        Beach2 => "Beach [2]",
+        Beach3 => "Beach [3]",
+        Beach4 => "Beach [4]",
+        Beach5 => "Beach [5]",
+        Beach6 => "Beach [6]",
+        Beach7 => "Beach [7]",
+        Beach8 => "Beach [8]",
+        Beach9 => "Beach [9]",
+        Bean => "Amalgus Bean Plantation",
+        Beeldeban => "Beeldeban Herder",
+        BeeldebanNest => "Beeldeban Nest",
+        BlackHoleGenerator => "Black Hole Generator",
+        Bread => "Bread Bakery",
+        Burger => "Malcud Burger Packer",
+        Capitol => "Capitol",
+        Cheese => "Cheese Maker",
+        Chip => "Denton Root Chip Frier",
+        Cider => "Apple Cider Bottler",
+        CitadelOfKnope => "Citadel of Knope",
+        CloakingLab => "Cloaking Lab",
+        Corn => "Corn Plantation",
+        CornMeal => "Corn Meal Grinder",
+        CrashedShipSite => "Crashed Ship Site",
+        Crater => "Crater",
+        CulinaryInstitute => "Culinary Institute",
+        Dairy => "Dairy Farm",
+        Denton => "Denton Root Patch",
+        DentonBrambles => "Denton Brambles",
+        DeployedBleeder => "Deployed Bleeder",
+        Development => "Development Ministry",
+        DistributionCenter => "Distribution Center",
+        Embassy => "Embassy",
+        EnergyReserve => "Energy Reserve",
+        Entertainment => "Entertainment District",
+        Espionage => "Espionage Ministry",
+        EssentiaVein => "Essentia Vein",
+        Fission => "Fission Reactor",
+        FoodReserve => "Food Reserve",
+        Fusion => "Fusion Reactor",
+        GasGiantLab => "Gas Giant Lab",
+        GasGiantPlatform => "Gas Giant Settlement Platform",
+        GeneticsLab => "Genetics Lab",
+        Geo => "Geo Energy Plant",
+        GeoThermalVent => "Geo Thermal Vent",
+        GratchsGauntlet => "Gratch's Gauntlet",
+        GreatBallOfJunk => "Great Ball of Junk",
+        Grove => "Grove of Trees",
+        HallsOfVrbansk => "Halls of Vrbansk",
+        HydroCarbon => "Hydrocarbon Energy Plant",
+        IBS => "Interstellar Broadcast System",
+        IntelTraining => "Intel Training Facility",
+        Intelligence => "Intelligence Ministry",
+        InterDimensionalRift => "Interdimensional Rift",
+        JunkHengeSculpture => "Junk Henge Sculpture",
+        KalavianRuins => "Kalavian Ruins",
+        KasternsKeep => "Kastern's Keep",
+        LCOTA => "Lost City of Tyleon (A)",
+        LCOTB => "Lost City of Tyleon (B)",
+        LCOTC => "Lost City of Tyleon (C)",
+        LCOTD => "Lost City of Tyleon (D)",
+        LCOTE => "Lost City of Tyleon (E)",
+        LCOTF => "Lost City of Tyleon (F)",
+        LCOTG => "Lost City of Tyleon (G)",
+        LCOTH => "Lost City of Tyleon (H)",
+        LCOTI => "Lost City of Tyleon (I)",
+        Lagoon => "Lagoon",
+        Lake => "Lake",
+        Lapis => "Lapis Orchard",
+        LapisForest => "Lapis Forest",
+        LibraryOfJith => "Library of Jith",
+        LuxuryHousing => "Luxury Housing",
+        Malcud => "Malcud Fungus Farm",
+        MalcudField => "Malcud Field",
+        MassadsHenge => "Massad's Henge",
+        MayhemTraining => "Mayhem Training Facility",
+        MercenariesGuild => "Mercenaries Guild",
+        MetalJunkArches => "Metal Junk Arches",
+        Mine => "Mine",
+        MiningMinistry => "Mining Ministry",
+        MissionCommand => "Mission Command",
+        MunitionsLab => "Munitions Lab",
+        NaturalSpring => "Natural Spring",
+        Network19 => "Network 19 Affiliate",
+        Observatory => "Observatory",
+        OperaHouse => "Opera House",
+        OracleOfAnid => "Oracle of Anid",
+        OreRefinery => "Ore Refinery",
+        OreStorage => "Ore Storage Tanks",
+        Oversight => "Oversight Ministry",
+        Pancake => "Potato Pancake Factory",
+        PantheonOfHagness => "Pantheon of Hagness",
+        Park => "Park",
+        Parliament => "Parliament",
+        Pie => "Lapis Pie Bakery",
+        PilotTraining => "Pilot Training Facility",
+        PlanetaryCommand => "Planetary Command Center",
+        PoliceStation => "Police Station",
+        PoliticsTraining => "Politics Training Facility",
+        Potato => "Potato Pancake Factory",
+        Propulsion => "Propulsion System Factory",
+        PyramidJunkSculpture => "Pyramid Junk Sculpture",
+        Ravine => "Ravine",
+        RockyOutcrop => "Rocky Outcropping",
+        SAW => "Shield Against Weapons",
+        SSLA => "Space Station Lab (A)",
+        SSLB => "Space Station Lab (B)",
+        SSLC => "Space Station Lab (C)",
+        SSLD => "Space Station Lab (D)",
+        Sand => "Patch of Sand",
+        Security => "Security Ministry",
+        Shake => "Beeldeban Protein Shake Factory",
+        Shipyard => "Shipyard",
+        Singularity => "Singularity Energy Plant",
+        Soup => "Amalgus Bean Soup Cannery",
+        SpaceJunkPark => "Space Junk Park",
+        SpacePort => "Space Port",
+        StationCommand => "Station Command Center",
+        Stockpile => "Stockpile",
+        SubspaceSupplyDepot => "Subspace Supply Depot",
+        SupplyPod => "Supply Pod",
+        Syrup => "Algae Syrup Bottler",
+        TempleOfTheDrajilites => "Temple of the Drajilites",
+        TerraformingLab => "Terraforming Lab",
+        TerraformingPlatform => "Terraforming Platform",
+        TheDillonForge => "The Dillon Forge",
+        TheftTraining => "Theft Training Facility",
+        ThemePark => "Theme Park",
+        Trade => "Trade Ministry",
+        Transporter => "Subspace Transporter",
+        University => "University",
+        Volcano => "Volcano",
+        Warehouse => "Warehouse",
+        WasteDigester => "Waste Digester",
+        WasteEnergy => "Waste Energy Plant",
+        WasteExchanger => "Waste Exchanger",
+        WasteRecycling => "Waste Recycling Center",
+        WasteSequestration => "Waste Sequestration Well",
+        WasteTreatment => "Waste Treatment Center",
+        WaterProduction => "Water Production Plant",
+        WaterPurification => "Water Purification Plant",
+        WaterReclamation => "Water Reclamation Facility",
+        WaterStorage => "Water Storage Tank",
+        Wheat => "Wheat Farm",
+    );
+
+    sub building_label{
+        my( $building ) = @_;
+        return $label{$building};
+    }
+
+    my %type_from_label =
+        map {
+            my $name = lc $label{$_};
+            $name =~ s/[^\w]//g;
+            $name => $_
+        } keys %label;
+
+    sub building_type_from_label {
+        my( $name ) = @_;
+        return unless defined $name;
+        $name = lc $name;
+        $name =~ s/[^\w]//g;
+        return $type_from_label{$name};
+    }
+    
+    sub building_types {
+        my @types = keys %label;
+        return wantarray ? @types : [@types];
+    }
+    
+    sub building_labels {
+        my @labels = values %label;
+        return wantarray ? @labels : [@labels];
+    }
+}
+{
+    my %recipes = (
+        AlgaePond => [[qw( uraninite methane)], ],
+        AmalgusMeadow => [[qw( beryl trona)], ],
+        Beach1 => [[qw( gypsum)], ],
+        Beach10 => [[qw( gypsum methane)], ],
+        Beach11 => [[qw( gypsum chromite)], ],
+        Beach12 => [[qw( gypsum goethite)], ],
+        Beach13 => [[qw( gypsum galena)], ],
+        Beach2 => [[qw( gypsum gypsum)], ],
+        Beach3 => [[qw( gypsum magnetite)], ],
+        Beach4 => [[qw( gypsum uraninite)], ],
+        Beach5 => [[qw( gypsum halite)], ],
+        Beach6 => [[qw( gypsum rutile)], ],
+        Beach7 => [[qw( gypsum chalcopyrite)], ],
+        Beach8 => [[qw( gypsum sulfur)], ],
+        Beach9 => [[qw( gypsum anthracite)], ],
+        BeeldebanNest => [[qw( anthracite trona kerogen)], ],
+        BlackHoleGenerator => [[qw( kerogen beryl anthracite monazite)], ],
+        CitadelOfKnope => [[qw( beryl sulfur monazite galena)], ],
+        CrashedShipSite => [[qw( monazite trona gold bauxite)], ],
+        Crater => [[qw( rutile)], ],
+        DentonBrambles => [[qw( rutile geothite)], ],
+        GasGiantPlatform => [[qw( sulfur methane galena anthracite)], ],
+        GeoThermalVent => [[qw( chalcopyrite sulfur)], ],
+        GratchsGauntlet => [[qw( chromite bauxite gold kerogen)], ],
+        Grove => [[qw( methane)], ],
+        HallsOfVrbansk => [[qw( goethite halite gypsum trona)], [qw( gold anthracite uraninite bauxite)], [qw( kerogen methane sulfur zircon)], [qw( monazite fluorite beryl magnetite)], [qw( rutile chromite chalcopyrite galena)], ],
+        InterDimensionalRift => [[qw( methane zircon fluorite)], ],
+        KalavianRuins => [[qw( galena gold)], ],
+        Lagoon => [[qw( chalcopyrite)], ],
+        Lake => [[qw( goethite)], ],
+        LapisForest => [[qw( halite anthracite)], ],
+        LibraryOfJith => [[qw( anthracite bauxite beryl chalcopyrite)], ],
+        MalcudField => [[qw( fluorite kerogen)], ],
+        NaturalSpring => [[qw( magnetite halite)], ],
+        OracleOfAnid => [[qw( gold uraninite bauxite goethite)], ],
+        PantheonOfHagness => [[qw( gypsum trona beryl anthracite)], ],
+        Ravine => [[qw( zircon methane galena fluorite)], ],
+        RockyOutcrop => [[qw( trona)], ],
+        Sand => [[qw( bauxite)], ],
+        TempleOfTheDrajilites => [[qw( kerogen rutile chromite chalcopyrite)], ],
+        TerraformingLab => [[qw( methane zircon magnetite beryl)], ],
+        Volcano => [[qw( magnetite uraninite)], ],
+    );
+    sub building_glyph_recipes{
+        my( $building ) = @_;
+        return if !exists $recipes{$building};
+        return wantarray ? @{ $recipes{$building} } : $recipes{$building}[0];
     }
 }
 {
@@ -626,7 +876,7 @@ our %EXPORT_TAGS = (
                 'War',
             ],
         },
-        space_station_hull => {
+        space_station => {
             type_human => 'Space Station Hull',
             tags       => [
                 'Intelligence',
@@ -751,6 +1001,10 @@ Games::Lacuna::Client::Types
 
 =item ship_attribute_types
 
+=item building_types
+
+=item building_labels
+
 =item ship_attribute_types
 
 =item get_tags
@@ -762,6 +1016,12 @@ Games::Lacuna::Client::Types
 =item meta_type
 
 =item meta_type_list
+
+=item building_label
+
+=item building_type_from_label
+
+=item building_glyph_recipes
 
 =item ship_types
 

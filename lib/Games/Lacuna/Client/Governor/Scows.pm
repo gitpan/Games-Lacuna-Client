@@ -8,8 +8,8 @@
 #===============================================================================
 
 package Games::Lacuna::Client::Governor::Scows;
-BEGIN {
-  $Games::Lacuna::Client::Governor::Scows::VERSION = '0.002';
+{
+  $Games::Lacuna::Client::Governor::Scows::VERSION = '0.003';
 }
 use strict;
 use warnings qw(FATAL all);
@@ -33,7 +33,7 @@ use Data::Dumper;
 
         my $ssa = $config->{profile}->{waste}->{send_scows_above};
         return if (not defined $ssa or
-            $status->{waste_capacity} == 0 or 
+            $status->{waste_capacity} == 0 or
             ($status->{waste_stored}/$status->{waste_capacity}) < $ssa);
 
         ### Find Spaceports.
@@ -52,7 +52,7 @@ use Data::Dumper;
             star_id   => $status->{star_id},
         };
 
-        while(@ships && 
+        while(@ships &&
             ($status->{waste_stored}/$status->{waste_capacity}) >= $ssa) {
             my $ship = pop @ships;
             $sp->send_ship($ship->{id},$target);
@@ -83,7 +83,7 @@ This module examines each colony and the scows currently available.
 
 This module looks for the profile->waste->send_scows_above configuration key in the governor config
 for each colony.  This number is a decimal between 0 and 1, representing a proportion.
-If the proportion of waste to capacity is over this amount, scows are sent to the 
+If the proportion of waste to capacity is over this amount, scows are sent to the
 nearest star.
 
 =head1 SEE ALSO

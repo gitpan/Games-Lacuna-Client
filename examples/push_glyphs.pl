@@ -58,7 +58,7 @@ my $empire  = $client->empire->get_status->{empire};
 my $planets = $empire->{planets};
 
 # reverse hash, to key by name instead of id
-my %planets_by_name = map { $planets->{$_}, $_ } keys %$planets;
+my %planets_by_name = reverse %$planets;
 
 my $to_id = $planets_by_name{$to}
     or die "--to planet not found";
@@ -97,7 +97,7 @@ my $ship_id;
 
 if ( $ship_name ) {
     my $ships = $trade_min->get_trade_ships->{ships};
-    
+
     my ($ship) =
         sort {
             $b->{speed} <=> $a->{speed}
@@ -105,19 +105,19 @@ if ( $ship_name ) {
         grep {
             $_->{name} =~ /\Q$ship_name/i
         } @$ships;
-    
+
     if ( $ship ) {
         my $cargo_each = $glyphs_result->{cargo_space_used_each};
         my $cargo_req  = $cargo_each * scalar @glyphs;
-        
+
         if ( $ship->{hold_size} < $cargo_req ) {
             my $count = floor( $ship->{hold_size} / $cargo_each );
-            
+
             splice @glyphs, $count;
-            
+
             warn sprintf "Specified ship cannot hold all plans - only pushing %d plans\n", $count;
         }
-        
+
         $ship_id = $ship->{id};
     }
     else {
@@ -126,7 +126,7 @@ if ( $ship_name ) {
     }
 }
 
-my @items = 
+my @items =
     map {
         +{
             type     => 'glyph',

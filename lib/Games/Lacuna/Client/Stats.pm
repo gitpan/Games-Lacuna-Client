@@ -1,6 +1,6 @@
 package Games::Lacuna::Client::Stats;
-BEGIN {
-  $Games::Lacuna::Client::Stats::VERSION = '0.002';
+{
+  $Games::Lacuna::Client::Stats::VERSION = '0.003';
 }
 use 5.0080000;
 use strict;
@@ -18,7 +18,7 @@ sub api_methods {
       map {
         ($_ => { default_args => [qw(session_id)] })
       }
-      qw( 
+      qw(
         alliance_rank
         find_alliance_rank
         empire_rank

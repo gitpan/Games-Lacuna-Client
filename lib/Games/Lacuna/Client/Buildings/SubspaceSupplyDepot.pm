@@ -1,6 +1,6 @@
 package Games::Lacuna::Client::Buildings::SubspaceSupplyDepot;
-BEGIN {
-  $Games::Lacuna::Client::Buildings::SubspaceSupplyDepot::VERSION = '0.002';
+{
+  $Games::Lacuna::Client::Buildings::SubspaceSupplyDepot::VERSION = '0.003';
 }
 use 5.0080000;
 use strict;

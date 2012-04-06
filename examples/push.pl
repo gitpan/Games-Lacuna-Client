@@ -41,7 +41,7 @@ my $empire  = $client->empire->get_status->{empire};
 my $planets = $empire->{planets};
 
 # reverse hash, to key by name instead of id
-my %planets_by_name = map { $planets->{$_}, $_ } keys %$planets;
+my %planets_by_name = reverse %$planets;
 
 my $to_id = $planets_by_name{$to}
     or die "to planet not found";
@@ -61,13 +61,13 @@ my @options;
 
 if ($ship_name) {
     my $trade_ships = $trade_min->get_trade_ships($to_id)->{ships};
-    
+
     my $ship = first
         {
             $_->{name} =~ m/$ship_name/i;
         }
         @$trade_ships;
-    
+
     if ($ship) {
         push @options, { ship_id => $ship->{id} };
     }

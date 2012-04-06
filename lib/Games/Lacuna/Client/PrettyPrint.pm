@@ -1,6 +1,6 @@
 package Games::Lacuna::Client::PrettyPrint;
-BEGIN {
-  $Games::Lacuna::Client::PrettyPrint::VERSION = '0.002';
+{
+  $Games::Lacuna::Client::PrettyPrint::VERSION = '0.003';
 }
 use English qw(-no_match_vars);
 use List::Util qw(sum);
@@ -48,7 +48,7 @@ sub show_status {
             _c_('bold '.($pct_full > 95 ? 'red' : $pct_full > 80 ? 'yellow' : 'green')),
             $res eq 'happiness' ? '  --' : sprintf('%3d%%',$pct_full),
             _c_('cyan'),
-            $res eq 'happiness' ? '    --' : sprintf('% 6.1f',($status->{"$res\_capacity"} - $status->{"$res\_stored"})/$status->{"$res\_hour"}),
+            $res eq 'happiness' ? '    --' : $status->{"$res\_hour"} ? sprintf('% 6.1f',($status->{"$res\_capacity"} - $status->{"$res\_stored"})/$status->{"$res\_hour"}) : '    N/A',
             _c_('reset');
     }
     show_bar('-');

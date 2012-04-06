@@ -5,6 +5,7 @@ use warnings;
 use FindBin;
 use lib "$FindBin::Bin/../lib";
 use List::Util            (qw( first sum ));
+use List::MoreUtils       qw( none );
 use Games::Lacuna::Client ();
 use Getopt::Long          (qw(GetOptions));
 
@@ -12,12 +13,14 @@ if ( $^O !~ /MSWin32/) {
     $Games::Lacuna::Client::PrettyPrint::ansi_color = 1;
 }
 
-my $planet_name;
+my @planets;
 my $opt_glyph_type = {};
 GetOptions(
-    'planet=s' => \$planet_name,
-    'c|color!' => \$Games::Lacuna::Client::PrettyPrint::ansi_color,
-    't|type=s' => sub { $opt_glyph_type->{$_[1]} = 1; },
+    'planet=s@' => \@planets,
+    'c|color!'  => \$Games::Lacuna::Client::PrettyPrint::ansi_color,
+    't|type=s'  => sub { $opt_glyph_type->{$_[1]} = 1; },
+    'f|functional!' => sub { $opt_glyph_type->{'Functional Recipes'} = 1; },
+    'd|decorative!' => sub { $opt_glyph_type->{'Decorative Recipes'} = 1; },
 );
 
 my $cfg_file = shift(@ARGV) || 'lacuna.yml';
@@ -37,7 +40,8 @@ unless ( $cfg_file and -e $cfg_file ) {
 }
 
 my $client = Games::Lacuna::Client->new(
-	cfg_file => $cfg_file,
+	cfg_file  => $cfg_file,
+    rpc_sleep => 2,
 	# debug    => 1,
 );
 
@@ -45,58 +49,86 @@ my $client = Games::Lacuna::Client->new(
 my $empire  = $client->empire->get_status->{empire};
 
 # reverse hash, to key by name instead of id
-my %planets = map { $empire->{planets}{$_}, $_ } keys %{ $empire->{planets} };
+my %planets = reverse %{ $empire->{planets} };
 
 # Scan each planet
 my %all_glyphs;
 foreach my $name ( sort keys %planets ) {
 
-    next if defined $planet_name && lc $planet_name ne lc $name;
+    next if @planets && none { lc $name eq lc $_ } @planets;
 
     # Load planet data
     my $planet    = $client->body( id => $planets{$name} );
     my $result    = $planet->get_buildings;
     my $body      = $result->{status}->{body};
-    
+
     my $buildings = $result->{buildings};
 
-    # Find the Archaeology Ministry
-    my $arch_id = first {
-            $buildings->{$_}->{name} eq 'Archaeology Ministry'
-    } keys %$buildings;
+    my $glyphs = get_glyphs( $client, $buildings );
 
-    next if not $arch_id;
-    
-    my $arch   = $client->building( id => $arch_id, type => 'Archaeology' );
-    my $glyphs = $arch->get_glyphs->{glyphs};
-    
     next if !@$glyphs;
-    
+
     printf "%s\n", $name;
     print "=" x length $name;
     print "\n";
-    
+
     @$glyphs = sort { $a->{type} cmp $b->{type} } @$glyphs;
-    
+
     my %glyphs;
-    
+
     for my $glyph (@$glyphs) {
         $glyphs{$glyph->{type}}++;
-        
+
         $all_glyphs{$glyph->{type}} = 0 if not $all_glyphs{$glyph->{type}};
         $all_glyphs{$glyph->{type}}++;
     }
-    
+
     map {
         printf "%s (%d)\n", ucfirst( $_ ), $glyphs{$_};
     } sort keys %glyphs;
-    
+
     printf "\t(%d glyphs)\n", sum values %glyphs;
-    
+
     print "\n";
 }
 
 creation_summary(%all_glyphs);
+
+exit;
+
+
+sub get_glyphs {
+    my ( $client, $buildings ) = @_;
+
+    my $id;
+    my $type;
+
+    # Find the Archaeology Ministry
+    my $arch_id = first {
+            $buildings->{$_}->{url} eq '/archaeology'
+    } keys %$buildings;
+
+    if ( $arch_id ) {
+        $id   = $arch_id;
+        $type = 'Archaeology';
+    }
+    else {
+        my $trade_id = first {
+                $buildings->{$_}->{url} eq '/trade'
+        } keys %$buildings;
+
+        if ( $trade_id ) {
+            $id   = $trade_id;
+            $type = 'Trade';
+        }
+    }
+
+    return [] if !$id;
+
+    my $building = $client->building( id => $id, type => $type );
+
+    return $building->get_glyphs->{glyphs};
+}
 
 # Print out a pretty table of what we can make.
 sub creation_summary {
@@ -284,13 +316,6 @@ Decorative Recipes:
     quantity:
       trona: 1
 Functional Recipes:
-  Amalgus Meadow:
-    order:
-      - beryl
-      - trona
-    quantity:
-      beryl: 1
-      trona: 1
   Algae Pond:
     order:
       - uraninite
@@ -298,6 +323,22 @@ Functional Recipes:
     quantity:
       methane: 1
       uraninite: 1
+  Amalgus Meadow:
+    order:
+      - beryl
+      - trona
+    quantity:
+      beryl: 1
+      trona: 1
+  Beeldeban Nest:
+    order:
+      - anthracite
+      - trona
+      - kerogen
+    quantity:
+      anthracite: 1
+      trona: 1
+      kerogen: 1
   Citadel of Knope:
     order:
       - beryl
@@ -345,6 +386,17 @@ Functional Recipes:
     quantity:
       chalcopyrite: 1
       sulfur: 1
+  Gratch's Gauntlet:
+    order:
+      - chromite
+      - bauxite
+      - gold
+      - kerogen
+    quantity:
+      chromite: 1
+      bauxite: 1
+      gold: 1
+      kerogen: 1
   Halls of Vrbansk (A):
     order:
       - goethite
@@ -437,6 +489,17 @@ Functional Recipes:
     quantity:
       halite: 1
       magnetite: 1
+  Oracle of Anid:
+    order:
+      - gold
+      - uraninite
+      - bauxite
+      - goethite
+    quantity:
+      bauxite: 1
+      goethite: 1
+      gold: 1
+      uraninite: 1
   Pantheon of Hagness:
     order:
       - gypsum

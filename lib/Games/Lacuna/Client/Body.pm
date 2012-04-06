@@ -1,6 +1,6 @@
 package Games::Lacuna::Client::Body;
-BEGIN {
-  $Games::Lacuna::Client::Body::VERSION = '0.002';
+{
+  $Games::Lacuna::Client::Body::VERSION = '0.003';
 }
 use 5.0080000;
 use strict;
@@ -17,11 +17,12 @@ use Class::XSAccessor {
 
 sub api_methods {
   return {
-    get_buildings => { default_args => [qw(session_id body_id)] },
-    get_status    => { default_args => [qw(session_id body_id)] },
-    get_buildable => { default_args => [qw(session_id body_id)] },
-    rename        => { default_args => [qw(session_id body_id)] },
-    abandon       => { default_args => [qw(session_id body_id)] },
+    get_buildings       => { default_args => [qw(session_id body_id)] },
+    rearrange_buildings => { default_args => [qw(session_id body_id)] },
+    get_status          => { default_args => [qw(session_id body_id)] },
+    get_buildable       => { default_args => [qw(session_id body_id)] },
+    rename              => { default_args => [qw(session_id body_id)] },
+    abandon             => { default_args => [qw(session_id body_id)] },
   };
 }
 

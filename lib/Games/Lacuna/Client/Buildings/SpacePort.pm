@@ -1,6 +1,6 @@
 package Games::Lacuna::Client::Buildings::SpacePort;
-BEGIN {
-  $Games::Lacuna::Client::Buildings::SpacePort::VERSION = '0.002';
+{
+  $Games::Lacuna::Client::Buildings::SpacePort::VERSION = '0.003';
 }
 use 5.0080000;
 use strict;
@@ -30,6 +30,7 @@ sub api_methods {
     send_spies              => { default_args => [qw(session_id)] },
     prepare_fetch_spies     => { default_args => [qw(session_id)] },
     fetch_spies             => { default_args => [qw(session_id)] },
+    view_battle_logs        => { default_args => [qw(session_id building_id)] },
   };
 }
 

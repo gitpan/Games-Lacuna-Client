@@ -1,6 +1,6 @@
 package Games::Lacuna::Client::Buildings::DistributionCenter;
-BEGIN {
-  $Games::Lacuna::Client::Buildings::DistributionCenter::VERSION = '0.002';
+{
+  $Games::Lacuna::Client::Buildings::DistributionCenter::VERSION = '0.003';
 }
 use 5.0080000;
 use strict;
@@ -14,9 +14,10 @@ our @ISA = qw(Games::Lacuna::Client::Buildings);
 
 sub api_methods {
   return {
-    view                   => { default_args => [qw(session_id building_id)] },
-    reserve                => { default_args => [qw(session_id building_id)] },
-    release_reserve        => { default_args => [qw(session_id building_id)] },
+    view                 => { default_args => [qw(session_id building_id)] },
+    reserve              => { default_args => [qw(session_id building_id)] },
+    release_reserve      => { default_args => [qw(session_id building_id)] },
+    get_stored_resources => { default_args => [qw(session_id building_id)] },
   };
 }
 

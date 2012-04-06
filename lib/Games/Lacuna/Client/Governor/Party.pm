@@ -6,8 +6,8 @@
 #===============================================================================
 
 package Games::Lacuna::Client::Governor::Party;
-BEGIN {
-  $Games::Lacuna::Client::Governor::Party::VERSION = '0.002';
+{
+  $Games::Lacuna::Client::Governor::Party::VERSION = '0.003';
 }
 use strict;
 use warnings qw(FATAL all);

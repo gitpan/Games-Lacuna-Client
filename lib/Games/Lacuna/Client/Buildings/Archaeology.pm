@@ -1,6 +1,6 @@
 package Games::Lacuna::Client::Buildings::Archaeology;
-BEGIN {
-  $Games::Lacuna::Client::Buildings::Archaeology::VERSION = '0.002';
+{
+  $Games::Lacuna::Client::Buildings::Archaeology::VERSION = '0.003';
 }
 use 5.0080000;
 use strict;
@@ -19,6 +19,8 @@ sub api_methods {
     get_glyphs          => { default_args => [qw(session_id building_id)] },
     assemble_glyphs     => { default_args => [qw(session_id building_id)] },
     get_ores_available_for_processing => { default_args => [qw(session_id building_id)] },
+    view_excavators     => { default_args => [qw(session_id building_id)] },
+    abandon_excavator   => { default_args => [qw(session_id building_id)] },
   };
 }
 

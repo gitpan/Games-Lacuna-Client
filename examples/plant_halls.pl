@@ -47,7 +47,7 @@ my $client = Games::Lacuna::Client->new(
 my $empire = $client->empire->get_status->{empire};
 
 # reverse hash, to key by name instead of id
-my %planets = map { $empire->{planets}{$_}, $_ } keys %{ $empire->{planets} };
+my %planets = reverse %{ $empire->{planets} };
 
 # Load planet data
 my $body = $client->body( id => $planets{$planet_name} );
@@ -55,27 +55,27 @@ my $body = $client->body( id => $planets{$planet_name} );
 
 do {
     my $buildings = $body->get_buildings->{buildings};
-    
+
     # if --max isn't provided, find out how many plans we have
     $max ||= plan_count( $buildings );
-    
+
     my $build_time = build_time( $buildings );
-    
+
     if ( $build_time ) {
         $build_time += 5;
         print "Sleeping for $build_time while build queue empties\n";
         sleep $build_time;
     }
-    
+
     my $queue_length = queue_length( $buildings );
-    
+
     # fill build-queue
     for ( 1 .. $queue_length ) {
         exit if $max-- == 0;
-        
+
         build_halls( $buildings );
     }
-    
+
 } while ( $max );
 
 exit;
@@ -83,87 +83,82 @@ exit;
 
 sub plan_count {
     my ( $buildings ) = @_;
-    
+
     my $pcc = first {
         $buildings->{$_}{url} eq '/planetarycommand'
     } keys %$buildings;
-    
+
     $pcc = $client->building( id => $pcc, type => 'PlanetaryCommand' );
-    
+
     my $plans = $pcc->view_plans->{plans};
-    
+
     my @halls = grep {
         $_->{name} eq 'Halls of Vrbansk'
     } @$plans;
-    
+
     die "No Halls of Vrbansk plans available\n"
         if !@halls;
-    
+
     return scalar @halls
 }
 
 sub build_time {
     my ( $buildings ) = @_;
-    
-    my $id = first {
-        $buildings->{$_}{url} eq '/development'
-    } keys %$buildings;
-    
-    die "No DevMin found\n"
-        if !$id;
-    
-    die "DevMin is still building\n"
-        if $buildings->{$id}{level} == 0;
-    
-    return $buildings->{$id}{work}{seconds_remaining};
+
+    return
+        max
+        grep { defined }
+        map {
+            $_->{pending_build}{seconds_remaining}
+        } values %$buildings;
 }
 
 sub queue_length {
     my ( $buildings ) = @_;
-    
+
     my $id = first {
         $buildings->{$_}{url} eq '/development'
     } keys %$buildings;
-    
+
     return 1 + $buildings->{$id}{level};;
 }
 
 sub build_halls {
     my ( $buildings ) = @_;
-    
+
     my ( $x, $y ) = next_empty_plot( $buildings );
-    
+
     die "No remaining empty spaces to build on\n"
         if !defined $x;
-    
+
     my $vrbansk = $client->building( type => 'HallsOfVrbansk' );
-    
+
     print "Building a Halls on $x,$y\n";
-    
+
     my $status = $vrbansk->build( $planets{$planet_name}, $x, $y );
-    
+
     # make sure we don't try building on the same plot later
     my $id = $status->{building}{id};
     $buildings->{$id}{x} = $x;
     $buildings->{$id}{y} = $y;
-    
+
     return $status;
 }
 
 sub next_empty_plot {
     my ( $buildings ) = @_;
-    
+
     for my $x ( -5 .. 5 ) {
         for my $y ( -5 .. 5 ) {
             next if grep {
                    $buildings->{$_}{x} == $x
                 && $buildings->{$_}{y} == $y
             } keys %$buildings;
-            
+
             return $x, $y;
         }
     }
-    
+
     return;
 }
 

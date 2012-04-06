@@ -46,7 +46,7 @@ my $client = Games::Lacuna::Client->new(
 my $empire  = $client->empire->get_status->{empire};
 
 # reverse hash, to key by name instead of id
-my %planets = map { $empire->{planets}{$_}, $_ } keys %{ $empire->{planets} };
+my %planets = reverse %{ $empire->{planets} };
 
 my $body      = $client->body( id => $planets{$planet_name} );
 my $buildings = $body->get_buildings->{buildings};
@@ -60,13 +60,13 @@ my @spies;
 
 for my $spy ( @{ $intel->view_spies->{spies} } ) {
     next if lc( $spy->{assigned_to}{name} ) ne lc( $target );
-    
+
     my @missions = grep {
         $_->{task} =~ /^$assignment/i
     } @{ $spy->{possible_assignments} };
-    
+
     next if !@missions;
-    
+
     if ( @missions > 1 ) {
         warn "Supplied --assignment matches multiple possible assignments - skipping!\n";
         for my $mission (@missions) {
@@ -74,24 +74,24 @@ for my $spy ( @{ $intel->view_spies->{spies} } ) {
         }
         last;
     }
-    
+
     $assignment = $missions[0]->{task};
-    
+
     push @spies, $spy;
 }
 
 for my $spy (@spies) {
     my $return;
-    
+
     eval {
         $return = $intel->assign_spy( $spy->{id}, $assignment );
     };
-    
+
     if ($@) {
         warn "Error: $@\n";
         next;
     }
-    
+
     printf "%s\n\t%s\n",
         $return->{mission}{result},
         $return->{mission}{reason};

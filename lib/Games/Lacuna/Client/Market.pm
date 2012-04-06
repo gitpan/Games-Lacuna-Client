@@ -1,6 +1,6 @@
 package Games::Lacuna::Client::Market;
-BEGIN {
-  $Games::Lacuna::Client::Market::VERSION = '0.002';
+{
+  $Games::Lacuna::Client::Market::VERSION = '0.003';
 }
 use strict;
 use warnings;
@@ -155,8 +155,8 @@ sub available_trades{
 
 {
   package Games::Lacuna::Client::Market::Trade;
-BEGIN {
-  $Games::Lacuna::Client::Market::Trade::VERSION = '0.002';
+{
+  $Games::Lacuna::Client::Market::Trade::VERSION = '0.003';
 }
   use Scalar::Util qw'blessed';
 
@@ -217,8 +217,8 @@ BEGIN {
 }
 {
   package Games::Lacuna::Client::Market::Trade::Item;
-BEGIN {
-  $Games::Lacuna::Client::Market::Trade::Item::VERSION = '0.002';
+{
+  $Games::Lacuna::Client::Market::Trade::Item::VERSION = '0.003';
 }
 
   sub new{
@@ -239,8 +239,8 @@ BEGIN {
 }
 {
   package Games::Lacuna::Client::Market::Trade::SimpleItem;
-BEGIN {
-  $Games::Lacuna::Client::Market::Trade::SimpleItem::VERSION = '0.002';
+{
+  $Games::Lacuna::Client::Market::Trade::SimpleItem::VERSION = '0.003';
 }
   use Games::Lacuna::Client::Types ':list';
   use List::MoreUtils qw'any';
@@ -288,8 +288,8 @@ BEGIN {
 }
 {
   package Games::Lacuna::Client::Market::Trade::Plan;
-BEGIN {
-  $Games::Lacuna::Client::Market::Trade::Plan::VERSION = '0.002';
+{
+  $Games::Lacuna::Client::Market::Trade::Plan::VERSION = '0.003';
 }
   our @ISA = 'Games::Lacuna::Client::Market::Trade::SimpleItem';
   use Games::Lacuna::Client::Types ':meta';
@@ -312,8 +312,8 @@ BEGIN {
 }
 {
   package Games::Lacuna::Client::Market::Trade::Glyph;
-BEGIN {
-  $Games::Lacuna::Client::Market::Trade::Glyph::VERSION = '0.002';
+{
+  $Games::Lacuna::Client::Market::Trade::Glyph::VERSION = '0.003';
 }
   our @ISA = 'Games::Lacuna::Client::Market::Trade::SimpleItem';
 
@@ -328,8 +328,8 @@ BEGIN {
 }
 {
   package Games::Lacuna::Client::Market::Trade::Ship;
-BEGIN {
-  $Games::Lacuna::Client::Market::Trade::Ship::VERSION = '0.002';
+{
+  $Games::Lacuna::Client::Market::Trade::Ship::VERSION = '0.003';
 }
   our @ISA = 'Games::Lacuna::Client::Market::Trade::SimpleItem';
 

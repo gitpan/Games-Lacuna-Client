@@ -1,6 +1,6 @@
 package Games::Lacuna::Client::Buildings::ThemePark;
-BEGIN {
-  $Games::Lacuna::Client::Buildings::ThemePark::VERSION = '0.002';
+{
+  $Games::Lacuna::Client::Buildings::ThemePark::VERSION = '0.003';
 }
 use 5.0080000;
 use strict;

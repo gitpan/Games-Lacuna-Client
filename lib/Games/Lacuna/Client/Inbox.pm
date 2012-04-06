@@ -1,6 +1,6 @@
 package Games::Lacuna::Client::Inbox;
-BEGIN {
-  $Games::Lacuna::Client::Inbox::VERSION = '0.002';
+{
+  $Games::Lacuna::Client::Inbox::VERSION = '0.003';
 }
 use 5.0080000;
 use strict;
@@ -17,7 +17,7 @@ sub api_methods {
       map {
         ($_ => { default_args => [qw(session_id)] })
       }
-      qw( 
+      qw(
         view_inbox
         view_archived
         view_trashed

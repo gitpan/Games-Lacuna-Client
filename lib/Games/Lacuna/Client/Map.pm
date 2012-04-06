@@ -1,6 +1,6 @@
 package Games::Lacuna::Client::Map;
-BEGIN {
-  $Games::Lacuna::Client::Map::VERSION = '0.002';
+{
+  $Games::Lacuna::Client::Map::VERSION = '0.003';
 }
 use 5.0080000;
 use strict;
